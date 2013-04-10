@@ -8,7 +8,7 @@ Branch master :
 Pour le moment la branche master est mergée avec la branche downloadXHR.
 
 
-Branche downloadXHR :
+Branche sahar :
 ---------------------
 Le plugin permet d'ajouter la clé publique associée à corentinhenry@gmail.com. Lors du premier click, ça ne fonctionne pas. Il faut effectuer un deuxième click. Le champ qui permet d'entrer l'adresse mail est inutilisé, l'adresse corentinhenry@gmail.com est entrée en dur dans le javascript.
 
