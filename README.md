@@ -23,7 +23,7 @@ Branche downloadXHR2 :
 Même genre.
 
 
-Branche downloadAjax :
+Branche downloadjquery :
 ----------------------
 Afin de gérer le cas ou plusieurs clés sont renvoyées par le serveur, on n'utilise plus la fonction XMLHttpRequest, mais la fonction jquery $.ajax(). Cette branche n'est pas encore fonctionnelle.
 
