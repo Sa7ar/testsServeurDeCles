@@ -145,39 +145,71 @@ function linkLocalFunction(event){
     }
 }
 
-function insertPublicKeyServer(){
-    
-    alert("ok");
-    var httpRequest = null; 
-    var url = 'http://keyserver.gingerbear.net/pks/lookup?op=get&search='+$('#keyID').val();
-    httpRequest = new XMLHttpRequest(); 
-
-    httpRequest.onreadystatechange = function() {
-    // instructions de traitement de la réponse
-    if ((httpRequest.readyState == 4) && (httpRequest.status == 200)) {
-    alert(httpRequest.responseText);
-   try{
-            
-      openpgp.keyring.importPublicKey(httpRequest.responseText);
-      openpgp.keyring.store();
-      parsePublicKeys();
-      return true;
+function searchPubKeyOnServer(){
+    // This function make the AJAX requests.
+    function makeRequest(callback,request) {
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 ){
+                if (xhr.status == 200 || xhr.status == 0) {
+                    if(!xhr.responseText){
+                        showMessages("****Erreur : responseText est vide.");
+                    }
+                    else{
+                        showMessages("responseText : "+xhr.responseText);
+                        callback(xhr.responseText);
+                    }
+                }
+            }
+        };
+        showMessages("Sending a request");
+        xhr.open("GET",request,true);
+        xhr.send(null);
     }
-       catch(e){
-     }
+
+    // After the first request, we get the KeiID associated with the email address
+    // that the user entered.
+    // For the moment, if several results are returned by gingerbear, this function
+    // extract only the first KeyID it finds...
+    function extractKeyId(htmlString){
+        if( /(0x[a-z0-9]{16})/i.test(htmlString)){
+            var keyID = RegExp.$1;
+            showMessages("Key ID found : "+keyID);
+            request = 'http://keyserver.gingerbear.net/pks/lookup?op=get&search='+keyID;
+            makeRequest(extractPubKey,request);
+        }
+        else{
+            showMessages("No Key ID found");
+        }
+    }
+
+
+    // After the second request, the function extract the public key, and call insertPublicKey
+    // to insert it in the keyring.
+    function extractPubKey(htmlString){
+        if(/(-----BEGIN PGP PUBLIC KEY BLOCK-----[\s\S]+?-----END PGP PUBLIC KEY BLOCK-----)/i.test(htmlString)){
+            var pubKey = RegExp.$1;
+            showMessages("Key found : "+pubKey);
+            insertPublicKey(pubKey);
+            showMessages("Key Inserted");
+        }
+    }
+    // This function verify that the user entered a valid email address.
+    function verifyEmailAddress(emailAddress){
+        if(/[a-z0-9._-]+@[a-z0-9._-]+\.[a-z]{2,6}$/i.test(emailAddress)){
+            console.log("Valid email address. We can make a request");
+            // First request
+            var request = 'http://keyserver.gingerbear.net/pks/lookup?search='+emailAddress+'&fingerprint=on&op=index';
+            makeRequest(extractKeyId,request);
+        }
+        else{
+            alert(emailAddress+" is not a valid address.");
+        }
+    }
+    var request = 'http://keyserver.gingerbear.net/pks/lookup?search=corentinhenry@gmail.com&fingerprint=on&op=index';
+    makeRequest(extractKeyId,request);
 }
-  else 
-  { alert("Un probléme est survenu avec votre requéte");}
 
-}
-
-
-    httpRequest.open("GET", url, true); 
-    httpRequest.send(); 
-    
-
-   };
-   
 function onLoad(){
     openpgp.init();
     parsePrivateKeys();
