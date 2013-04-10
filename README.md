@@ -18,6 +18,15 @@ Problèmes :
 * ça fonctionne pour corentinhenry@gmail.com parce que une seule clé est renvoyée pas le serveur, mais si on essaie avec john.smith@gmail.com, ça ne fonctionne pas.
 
 
+Branche Sahar :
+
+la fonction insertPublicKeyFromServer envoie une requéte au serveur en se basant soit sur l'ID de la clé ou sur 
+l'adresse e-mail du propriétaire de la clé. J'ai essayé avec sah.trabelsi@gmail.com et ça fonctionne, le serveur 
+m'a retourné ma clé. 
+Le probléme c'est au cas ou une méme adresse mail dispose de plusieurs clés, on pourra pas effectuer cette requéte
+sans cléID. Un deuxiéme probléme est au niveau de l'exécution de la fonction : il faut effectuer deux clicks sur 
+le bouton GetKey pour que le plugin envoie une requéte au serveur
+
 Branche downloadXHR2 :
 ----------------------
 Même genre.
